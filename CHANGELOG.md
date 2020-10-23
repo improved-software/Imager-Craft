@@ -1,5 +1,9 @@
 # Imager Changelog
 
+## 2.5.1 - 2020-10-24
+### Changed
+- No longer switches the _mode_ setting to _fit_. Gumlet has a mode setting and it can now be added to the URL options.
+
 ## 2.5.0 - 2020-10-23
 ### Added
 - Config option removePath. When an external source - E.g. S3 bucket - uses a parent folder to separate images. Creating a source (Gumlet) allows the folder to be removed from the path.

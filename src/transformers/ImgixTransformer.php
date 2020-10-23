@@ -163,7 +163,7 @@ class ImgixTransformer extends Component implements TransformerInterface
             }
         }
 
-        // Set quality 
+        // Set quality
         if (
             !isset($transform['q'])
             && !$this->transformHasAutoCompressionEnabled($transform)
@@ -188,63 +188,64 @@ class ImgixTransformer extends Component implements TransformerInterface
 
         unset($transform['jpegQuality'], $transform['pngCompressionLevel'], $transform['webpQuality']);
 
+        /* USING GUMLET NOW, FIT NOT USED, MODE IS VALID SETTING */
         // Deal with resize mode, called fit in Imgix
-        if (!isset($transform['fit'])) {
-            if (isset($transform['mode'])) {
-                $mode = $transform['mode'];
+        // if (!isset($transform['fit'])) {
+        //     if (isset($transform['mode'])) {
+        //         $mode = $transform['mode'];
 
-                switch ($mode) {
-                    case 'crop':
-                        $r['fit'] = 'crop';
-                        break;
-                    case 'fit':
-                        $r['fit'] = 'clip';
-                        break;
-                    case 'stretch':
-                        $r['fit'] = 'scale';
-                        break;
-                    case 'croponly':
-                        // todo : Not really supported, need to figure out if there's a workaround 
-                        break;
-                    case 'letterbox':
-                        $r['fit'] = 'fill';
-                        $letterboxDef = $config->getSetting('letterbox', $transform);
-                        $r['bg'] = $this->getLetterboxColor($letterboxDef);
-                        unset($transform['letterbox']);
-                        break;
-                    default:
-                        $r['fit'] = 'crop';
-                        break;
-                }
+        //         switch ($mode) {
+        //             case 'crop':
+        //                 $r['fit'] = 'crop';
+        //                 break;
+        //             case 'fit':
+        //                 $r['fit'] = 'clip';
+        //                 break;
+        //             case 'stretch':
+        //                 $r['fit'] = 'scale';
+        //                 break;
+        //             case 'croponly':
+        //                 // todo : Not really supported, need to figure out if there's a workaround
+        //                 break;
+        //             case 'letterbox':
+        //                 $r['fit'] = 'fill';
+        //                 $letterboxDef = $config->getSetting('letterbox', $transform);
+        //                 $r['bg'] = $this->getLetterboxColor($letterboxDef);
+        //                 unset($transform['letterbox']);
+        //                 break;
+        //             default:
+        //                 $r['fit'] = 'crop';
+        //                 break;
+        //         }
 
-                unset($transform['mode']);
-            } else {
-                if (isset($r['w'], $r['h'])) {
-                    $r['fit'] = 'crop';
-                } else {
-                    $r['fit'] = 'clip';
-                }
-            }
-        } else {
-            $r['fit'] = $transform['fit'];
-            unset($transform['fit']);
-        }
+        //         unset($transform['mode']);
+        //     } else {
+        //         if (isset($r['w'], $r['h'])) {
+        //             $r['fit'] = 'crop';
+        //         } else {
+        //             $r['fit'] = 'clip';
+        //         }
+        //     }
+        // } else {
+        //     $r['fit'] = $transform['fit'];
+        //     unset($transform['fit']);
+        // }
 
         // If fit is crop, and crop isn't specified, use position as focal point.
-        if ($r['fit'] === 'crop' && !isset($transform['crop'])) {
-            $position = $config->getSetting('position', $transform);
-            list($left, $top) = explode(' ', $position);
-            $r['crop'] = 'focalpoint';
-            $r['fp-x'] = ((float)$left) / 100;
-            $r['fp-y'] = ((float)$top) / 100;
+        // if ($r['fit'] === 'crop' && !isset($transform['crop'])) {
+        //     $position = $config->getSetting('position', $transform);
+        //     list($left, $top) = explode(' ', $position);
+        //     $r['crop'] = 'focalpoint';
+        //     $r['fp-x'] = ((float)$left) / 100;
+        //     $r['fp-y'] = ((float)$top) / 100;
 
-            if (isset($transform['cropZoom'])) {
-                $r['fp-z'] = $transform['cropZoom'];
-                unset($transform['cropZoom']);
-            }
+        //     if (isset($transform['cropZoom'])) {
+        //         $r['fp-z'] = $transform['cropZoom'];
+        //         unset($transform['cropZoom']);
+        //     }
 
-            unset($transform['position']);
-        }
+        //     unset($transform['position']);
+        // }
 
         // Add any explicitly set Imgix params
         if (isset($transform['imgixParams'])) {
@@ -255,21 +256,22 @@ class ImgixTransformer extends Component implements TransformerInterface
             unset($transform['imgixParams']);
         }
 
-        // Assume that the reset of the values left in the transform object is Imgix specific 
+        // Assume that the reset of the values left in the transform object is Imgix specific
         foreach ($transform as $key => $val) {
             $r[$key] = $val;
         }
 
+        /* USING GUMLET NOW, FIT NOT USED, MODE IS VALID SETTING */
         // If allowUpscale is disabled, use max-w/-h instead of w/h
-        if (isset($r['fit']) && !$config->getSetting('allowUpscale', $transform)) {
-            if ($r['fit'] === 'crop') {
-                $r['fit'] = 'min';
-            }
+        // if (isset($r['fit']) && !$config->getSetting('allowUpscale', $transform)) {
+        //     if ($r['fit'] === 'crop') {
+        //         $r['fit'] = 'min';
+        //     }
 
-            if ($r['fit'] === 'clip') {
-                $r['fit'] = 'max';
-            }
-        }
+        //     if ($r['fit'] === 'clip') {
+        //         $r['fit'] = 'max';
+        //     }
+        // }
 
         // Unset stuff that's not supported by Imgix and has not yet been dealt with
         unset(
@@ -286,7 +288,7 @@ class ImgixTransformer extends Component implements TransformerInterface
             $r['hashRemoteUrl']
         );
 
-        // Remove any empty values in return array, since these will result in 
+        // Remove any empty values in return array, since these will result in
         // an empty query string value that will give us trouble with Facebook (!).
         foreach ($r as $key => $val) {
             if ($val === '') {
@@ -341,7 +343,7 @@ class ImgixTransformer extends Component implements TransformerInterface
             return $val;
         }
 
-        if (\strlen($color) === 4 || \strlen($color) === 8) { // assume color already is 4 or 8 digit rgba. 
+        if (\strlen($color) === 4 || \strlen($color) === 8) { // assume color already is 4 or 8 digit rgba.
             return $color;
         }
 

@@ -17,37 +17,37 @@ class ImgixTransformedImageModel implements TransformedImageInterface
      * @var string
      */
     public $path;
-    
+
     /**
      * @var string
      */
     public $filename;
-    
+
     /**
      * @var string
      */
     public $url;
-    
+
     /**
      * @var string
      */
     public $extension;
-    
+
     /**
      * @var string
      */
     public $mimeType;
-    
+
     /**
      * @var int
      */
     public $width;
-    
+
     /**
      * @var int
      */
     public $height;
-    
+
     /**
      * @var int|float
      */
@@ -86,25 +86,26 @@ class ImgixTransformedImageModel implements TransformedImageInterface
 
 
         if (isset($params['w'], $params['h'])) {
-            if (($source !== null) && ($params['fit'] === 'min' || $params['fit'] === 'max')) {
-                list($sourceWidth, $sourceHeight) = $this->getSourceImageDimensions($source);
+            /* USING GUMLET NOW, FIT NOT USED, MODE IS VALID SETTING */
+            // if (($source !== null) && ($params['fit'] === 'min' || $params['fit'] === 'max')) {
+            //     list($sourceWidth, $sourceHeight) = $this->getSourceImageDimensions($source);
 
-                $paramsW = (int)$params['w'];
-                $paramsH = (int)$params['h'];
+            //     $paramsW = (int)$params['w'];
+            //     $paramsH = (int)$params['h'];
 
-                if ($sourceWidth / $sourceHeight < $paramsW / $paramsH) {
-                    $useW = min($paramsW, $sourceWidth);
-                    $this->width = $useW;
-                    $this->height = round($useW * ($paramsH / $paramsW));
-                } else {
-                    $useH = min($paramsH, $sourceHeight);
-                    $this->width = round($useH * ($paramsW / $paramsH));
-                    $this->height = $useH;
-                }
-            } else {
+            //     if ($sourceWidth / $sourceHeight < $paramsW / $paramsH) {
+            //         $useW = min($paramsW, $sourceWidth);
+            //         $this->width = $useW;
+            //         $this->height = round($useW * ($paramsH / $paramsW));
+            //     } else {
+            //         $useH = min($paramsH, $sourceHeight);
+            //         $this->width = round($useH * ($paramsW / $paramsH));
+            //         $this->height = $useH;
+            //     }
+            // } else {
                 $this->width = (int)$params['w'];
                 $this->height = (int)$params['h'];
-            }
+            // }
         } else {
             if (isset($params['w']) || isset($params['h'])) {
 
@@ -128,7 +129,7 @@ class ImgixTransformedImageModel implements TransformedImageInterface
             } else {
                 // Neither is set, image is not resized. Just get dimensions and return.
                 list($sourceWidth, $sourceHeight) = $this->getSourceImageDimensions($source);
-                
+
                 $this->width = $sourceWidth;
                 $this->height = $sourceHeight;
             }
@@ -168,39 +169,41 @@ class ImgixTransformedImageModel implements TransformedImageInterface
      */
     protected function calculateTargetSize($params, $sourceWidth, $sourceHeight): array
     {
-        $fit = $params['fit']; // clamp, clip, crop, facearea, fill, fillmax, max, min, and scale. 
+        /* USING GUMLET NOW, FIT NOT USED, MODE IS VALID SETTING */
+        // $fit = $params['fit']; // clamp, clip, crop, facearea, fill, fillmax, max, min, and scale.
         $ratio = $sourceWidth / $sourceHeight;
 
         $w = $params['w'] ?? null;
         $h = $params['h'] ?? null;
 
-        switch ($fit) {
-            case 'clip':
-            case 'fill':
-            case 'crop':
-            case 'clamp':
-            case 'scale':
-                if ($w) {
-                    return [$w, round($w / $ratio)];
-                }
-                if ($h) {
-                    return [round($h * $ratio), $h];
-                }
-                break;
-            case 'min':
-            case 'max':
-                if ($w) {
-                    $useWidth = min($w, $sourceWidth);
+        /* USING GUMLET NOW, FIT NOT USED, MODE IS VALID SETTING */
+        // switch ($fit) {
+        //     case 'clip':
+        //     case 'fill':
+        //     case 'crop':
+        //     case 'clamp':
+        //     case 'scale':
+        //         if ($w) {
+        //             return [$w, round($w / $ratio)];
+        //         }
+        //         if ($h) {
+        //             return [round($h * $ratio), $h];
+        //         }
+        //         break;
+        //     case 'min':
+        //     case 'max':
+        //         if ($w) {
+        //             $useWidth = min($w, $sourceWidth);
 
-                    return [$useWidth, round($useWidth / $ratio)];
-                }
-                if ($h) {
-                    $useHeigth = min($h, $sourceHeight);
+        //             return [$useWidth, round($useWidth / $ratio)];
+        //         }
+        //         if ($h) {
+        //             $useHeigth = min($h, $sourceHeight);
 
-                    return [round($useHeigth * $ratio), $useHeigth];
-                }
-                break;
-        }
+        //             return [round($useHeigth * $ratio), $useHeigth];
+        //         }
+        //         break;
+        // }
 
         return [$w ?: 0, $h ?: 0];
     }
@@ -295,7 +298,7 @@ class ImgixTransformedImageModel implements TransformedImageInterface
     {
         return false;
     }
-    
+
     /**
      * @return string
      */
