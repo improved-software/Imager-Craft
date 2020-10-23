@@ -17,7 +17,9 @@ class ImgixSettings extends Model
     public $defaultParams = [];
     public $excludeFromPurge = false;
     public $apiKey = '';
-    
+    // The folder path removed from the URL by the external source
+    public $removePath = null;
+
     public function __construct($config = [])
     {
         if (!empty($config)) {
