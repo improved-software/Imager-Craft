@@ -1,5 +1,9 @@
 # Imager Changelog
 
+## 2.5.2 - 2020-10-24
+### Changed
+- No longer falls back to default quality settings. Only pass q option when needed.
+
 ## 2.5.1 - 2020-10-24
 ### Changed
 - No longer switches the _mode_ setting to _fit_. Gumlet has a mode setting and it can now be added to the URL options.

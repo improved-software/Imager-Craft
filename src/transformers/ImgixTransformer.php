@@ -163,28 +163,30 @@ class ImgixTransformer extends Component implements TransformerInterface
             }
         }
 
+        /* DEFAULT QUALITY IS SET ON GUMLET SOURCE.
+         * NO NEED TO FALL BACK TO DEFAULTS. ONLY SET IF SPECIFICALLY PASSED */
         // Set quality
-        if (
-            !isset($transform['q'])
-            && !$this->transformHasAutoCompressionEnabled($transform)
-        ) {
-            if (isset($r['fm'])) {
-                $r['q'] = $this->getQualityFromExtension($r['fm'], $transform);
-            } else {
-                $ext = null;
+        // if (
+        //     !isset($transform['q'])
+        //     && !$this->transformHasAutoCompressionEnabled($transform)
+        // ) {
+        //     if (isset($r['fm'])) {
+        //         $r['q'] = $this->getQualityFromExtension($r['fm'], $transform);
+        //     } else {
+        //         $ext = null;
 
-                if ($image instanceof Asset) {
-                    $ext = $image->getExtension();
-                }
+        //         if ($image instanceof Asset) {
+        //             $ext = $image->getExtension();
+        //         }
 
-                if (\is_string($image)) {
-                    $pathParts = pathinfo($image);
-                    $ext = $pathParts['extension'];
-                }
+        //         if (\is_string($image)) {
+        //             $pathParts = pathinfo($image);
+        //             $ext = $pathParts['extension'];
+        //         }
 
-                $r['q'] = $this->getQualityFromExtension($ext, $transform);
-            }
-        }
+        //         $r['q'] = $this->getQualityFromExtension($ext, $transform);
+        //     }
+        // }
 
         unset($transform['jpegQuality'], $transform['pngCompressionLevel'], $transform['webpQuality']);
 
