@@ -1,2 +1,7 @@
 .DS_Store
 .idea
+
+# Miscellaneous Files
+#-------------------------
+*.sublime-workspace
+*.sublime-project
