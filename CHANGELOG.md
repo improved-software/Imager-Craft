@@ -1,5 +1,9 @@
 # Imager Changelog
 
+## 2.5.2.1 - 2020-10-24
+### Fixed
+- Height and width now calculated when images use mode='fit'. Needed for javascript lazyload to create the right sized container prior to the image being loaded.
+
 ## 2.5.2 - 2020-10-24
 ### Changed
 - No longer falls back to default quality settings. Only pass q option when needed.

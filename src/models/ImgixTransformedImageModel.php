@@ -59,6 +59,12 @@ class ImgixTransformedImageModel implements TransformedImageInterface
     private $profileConfig;
 
     /**
+     * If mode is set to fit, we need to get the width and height
+     * @var string
+     */
+    private $mode;
+
+    /**
      * ImgixTransformedImageModel constructor.
      *
      * @param string|null        $imageUrl
@@ -76,6 +82,10 @@ class ImgixTransformedImageModel implements TransformedImageInterface
         $this->extension = '';
         $this->mimeType = '';
         $this->size = 0;
+        // Mode on Gumlet defaults to fit if it isn't set
+        $this->mode = (isset($params['mode'])) ? $params['mode'] : 'fit';
+
+
 
         if ($imageUrl !== null) {
             $this->url = $imageUrl;
@@ -87,25 +97,26 @@ class ImgixTransformedImageModel implements TransformedImageInterface
 
         if (isset($params['w'], $params['h'])) {
             /* USING GUMLET NOW, FIT NOT USED, MODE IS VALID SETTING */
-            // if (($source !== null) && ($params['fit'] === 'min' || $params['fit'] === 'max')) {
-            //     list($sourceWidth, $sourceHeight) = $this->getSourceImageDimensions($source);
+            if (($source !== null) && ($this->mode === 'fit')) {
+                list($sourceWidth, $sourceHeight) = $this->getSourceImageDimensions($source);
 
-            //     $paramsW = (int)$params['w'];
-            //     $paramsH = (int)$params['h'];
+                $paramsW = (int)$params['w'];
+                $paramsH = (int)$params['h'];
 
-            //     if ($sourceWidth / $sourceHeight < $paramsW / $paramsH) {
-            //         $useW = min($paramsW, $sourceWidth);
-            //         $this->width = $useW;
-            //         $this->height = round($useW * ($paramsH / $paramsW));
-            //     } else {
-            //         $useH = min($paramsH, $sourceHeight);
-            //         $this->width = round($useH * ($paramsW / $paramsH));
-            //         $this->height = $useH;
-            //     }
-            // } else {
+                if ($sourceWidth / $sourceHeight < $paramsW / $paramsH) {
+                    $useW = min($paramsW, $sourceWidth);
+                    $this->width = $useW;
+                    $this->height = round($useW * ($paramsH / $paramsW));
+                } else {
+                    $useH = min($paramsH, $sourceHeight);
+                    $this->width = round($useH * ($paramsW / $paramsH));
+                    $this->height = $useH;
+                }
+
+            } else {
                 $this->width = (int)$params['w'];
                 $this->height = (int)$params['h'];
-            // }
+            }
         } else {
             if (isset($params['w']) || isset($params['h'])) {
 
@@ -175,6 +186,23 @@ class ImgixTransformedImageModel implements TransformedImageInterface
 
         $w = $params['w'] ?? null;
         $h = $params['h'] ?? null;
+
+        // When mode='fit' we need to get the width and height as they can change
+        switch ($this->mode) {
+            case 'crop':
+            case 'fit':
+                if ($w) {
+                    $useWidth = min($w, $sourceWidth);
+
+                    return [$useWidth, round($useWidth / $ratio)];
+                }
+                if ($h) {
+                    $useHeigth = min($h, $sourceHeight);
+
+                    return [round($useHeigth * $ratio), $useHeigth];
+                }
+                break;
+        }
 
         /* USING GUMLET NOW, FIT NOT USED, MODE IS VALID SETTING */
         // switch ($fit) {
